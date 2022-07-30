@@ -4,15 +4,13 @@ import net.inditorias.beyondsculk.blockentities.ModBlockEntities;
 import net.inditorias.beyondsculk.blockentities.advanced.ActivatedReinforcedDeepslateBlockEntity;
 import net.inditorias.beyondsculk.blocks.ModBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
@@ -43,10 +41,6 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
 
     public ActivatedReinforcedDeepslate(Properties properties) {
         super(properties);
-    }
-
-    public static int lightLevel(BlockState state){
-       return 6;
     }
 
     @Override
@@ -87,7 +81,6 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
 
     @Override
     public void randomTick(BlockState blockState, ServerLevel level, BlockPos pos, RandomSource randomSource) {
-        System.out.println("Randomly Ticked");
         //Souls == 0
         //Neighbor has sculkportalblock
         if(!getNeighborBlocks(level, pos).contains(ModBlocks.SCULK_PORTAL_BLOCK.get())){
@@ -103,14 +96,13 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
         int switchInt = randomSource.nextIntBetweenInclusive(0, 100);
         int weight = wardens.size() + 2;
         weight *= weight * 2;
-        if(wardens.isEmpty() || switchInt > weight){
-            for(int i = 0; i < 5; i++) {
+        if(wardens.isEmpty() || switchInt > weight) {
+            if(level.setBlock(pos, ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get().defaultBlockState(), 18)){
                 if (ActivatedReinforcedDeepslate.AttemptSummonWarden(level, pos)) {
-                    level.setBlock(pos, ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get().defaultBlockState(), 18);
                     level.playSound(null, pos, SoundEvents.WARDEN_EMERGE, SoundSource.BLOCKS, 1f, 0);
-                    break;
                 }
             }
+
         }else{
             List<Warden> wardensLowHealth = new ArrayList<>();
             for(Warden w : wardens){
@@ -127,6 +119,9 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
             level.addParticle(ParticleTypes.SCULK_SOUL,
                     pos.getX(), pos.getY(), pos.getZ(), healing.position().x - pos.getX(), healing.position().y - pos.getY(), healing.position().z - pos.getZ());
             level.playSound(null, pos, SoundEvents.SOUL_ESCAPE, SoundSource.BLOCKS, 1.2f, 0);
+        }
+        if(isCompletelyUnstable(level, pos)){
+            spawnPortalBoss(level, pos);
         }
     }
 
@@ -154,7 +149,7 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
 
     public static ArrayList<BlockPos> chooseNeighbor(Level level, BlockPos pos){
 
-        //Choose neighbor with least amount of souls
+        //Choose neighbor with the least amount of souls
         ArrayList<BlockPos> options = new ArrayList<BlockPos>();
         if(level.getBlockState(pos.above()).getBlock().equals(Blocks.REINFORCED_DEEPSLATE)){
             options.add(new BlockPos(pos.above()));
@@ -179,37 +174,133 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
         return options;
     }
 
-    public static boolean AttemptSummonWarden(Level level, BlockPos pos){
+    public static boolean AttemptSummonWarden(ServerLevel level, BlockPos pos){
         //Try to summon a warden in a portal block
         //Find portal blocks in range x:5 y:2 z:5
         //Use random delta
+
         RandomSource r =  RandomSource.createNewThreadLocalInstance();
-        BlockPos spawnLoc = pos.offset(r.nextIntBetweenInclusive(-5, 5), r.nextIntBetweenInclusive(-2, 2), r.nextIntBetweenInclusive(-5, 5));
-        MinecraftServer server = level.getServer();
-        if(level.getBlockState(spawnLoc).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get()) && server != null) {
+        ArrayList<BlockPos> spawnLocs = getNeighborBlocksPortalBlockPos(level, pos);
+        BlockPos spawnLoc = getSpawnLoc(spawnLocs.get((int)(spawnLocs.size() * r.nextDouble())), pos, r);
+        if(!level.getBlockState(spawnLoc).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            spawnLoc = spawnLocs.get((int)(spawnLocs.size() * r.nextDouble()));
+        }
             Warden warden = EntityType.WARDEN.create(level);
-            ServerLevel serverLevel = server.getLevel(level.dimension());
-            if (warden != null && serverLevel != null) {
-                List< Player> players = new ArrayList<>();
+
+            if (warden != null) {
+                List<Player> players = new ArrayList<>();
                 List<Entity> entities = level.getEntities(null, new AABB(pos.offset(-50, -25, -50), pos.offset(50, 25, 50)));
-                for(Entity e : entities){
-                    if(e  instanceof  Player p){
+                for (Entity e : entities) {
+                    if (e instanceof Player p) {
                         players.add(p);
                     }
                 }
-                if(players.isEmpty()){
+                if (players.isEmpty()) {
                     players.add(level.getNearestPlayer(warden, 128f));
                 }
                 warden.moveTo(spawnLoc, 0.0f, 0.0f);
-                warden.finalizeSpawn(serverLevel, level.getCurrentDifficultyAt(spawnLoc), MobSpawnType.TRIGGERED, (SpawnGroupData) null, (CompoundTag) null);
-                warden.increaseAngerAt(players.get((int)(r.nextFloat() * players.size())), 150, false);
+                warden.setPersistenceRequired();
+                warden.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnLoc), MobSpawnType.TRIGGERED, (SpawnGroupData) null, (CompoundTag) null);
+                warden.increaseAngerAt(players.get((int) (r.nextFloat() * players.size())), 150, false);
                 warden.setHealth(25);
-                System.out.println("Created Warden with " + 25 + "HP");
-                serverLevel.addFreshEntityWithPassengers(warden);
+                level.addFreshEntityWithPassengers(warden);
 
             }
-
-        }
         return false;
+    }
+
+
+    private  static BlockPos getSpawnLoc(BlockPos portal, BlockPos frame, RandomSource r){
+        Vec3i diff = new Vec3i(portal.getX() - frame.getX(), portal.getY() - frame.getY(), portal.getZ() - frame.getZ());
+        diff = diff.multiply((int)(r.nextDouble()*3));
+        return frame.offset(diff);
+    }
+    public static ArrayList<BlockPos> getNeighborBlocksPortalBlockPos(Level level, BlockPos pos){
+        ArrayList<BlockPos> neighbors = new ArrayList<>();
+        if(level.getBlockState(pos.below()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.below());
+        }
+        if(level.getBlockState(pos.above()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.above());
+        }
+        if(level.getBlockState(pos.west()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.west());
+        }
+        if(level.getBlockState(pos.east()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.east());
+        }
+        if(level.getBlockState(pos.south()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.south());
+        }
+        if(level.getBlockState(pos.north()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.north());
+        }
+
+        if(level.getBlockState(pos.west().above()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.above().west());
+        }
+        if(level.getBlockState(pos.east().above()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.above().east());
+        }
+        if(level.getBlockState(pos.south().above()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.above().south());
+        }
+        if(level.getBlockState(pos.north().above()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.above().north());
+        }
+
+        if(level.getBlockState(pos.west().below()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.west().below());
+        }
+        if(level.getBlockState(pos.east().below()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.east().below());
+        }
+        if(level.getBlockState(pos.south().below()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.south().below());
+        }
+        if(level.getBlockState(pos.north().below()).getBlock().equals(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            neighbors.add(pos.north().below());
+        }
+
+        return neighbors;
+    }
+
+    private boolean isCompletelyUnstable(Level level, BlockPos startPos){
+        BlockPos lastPos = new BlockPos(startPos);
+        BlockPos temp;
+        BlockPos currPos = getNextPos(level, startPos, lastPos);
+        while(currPos != null && currPos != startPos){
+            temp = currPos;
+            currPos = getNextPos(level, currPos, lastPos);
+            lastPos = temp;
+        }
+        return (currPos == startPos);
+    }
+
+    @Nullable
+    private BlockPos getNextPos(Level level, BlockPos curr, BlockPos last){
+        if(level.getBlockState(curr.above()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) && !curr.above().equals(last)){
+            return curr.above();
+        }
+        if(level.getBlockState(curr.below()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) && !curr.below().equals(last)){
+            return curr.below();
+        }
+        if(level.getBlockState(curr.north()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) && !curr.north().equals(last)){
+            return curr.north();
+        }
+        if(level.getBlockState(curr.south()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) && !curr.south().equals(last)){
+            return curr.south();
+        }
+        if(level.getBlockState(curr.east()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) && !curr.east().equals(last)){
+            return curr.east();
+        }
+        if(level.getBlockState(curr.west()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) && !curr.west().equals(last)){
+            return curr.west();
+        }
+        return null;
+    }
+
+    private void spawnPortalBoss(ServerLevel level, BlockPos pos){
+
     }
 }

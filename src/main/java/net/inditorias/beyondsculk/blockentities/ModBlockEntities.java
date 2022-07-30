@@ -2,6 +2,7 @@ package net.inditorias.beyondsculk.blockentities;
 
 import net.inditorias.beyondsculk.BeyondSculk;
 import net.inditorias.beyondsculk.blockentities.advanced.ActivatedReinforcedDeepslateBlockEntity;
+import net.inditorias.beyondsculk.blockentities.advanced.ResonantReinforcedDeepslateBlockEntity;
 import net.inditorias.beyondsculk.blocks.ModBlocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -15,6 +16,9 @@ public class ModBlockEntities {
 
     public static final RegistryObject<BlockEntityType<ActivatedReinforcedDeepslateBlockEntity>> ACTIVATED_REINFORCED_DEEPSLATE_BLOCK_ENTITY =
             BLOCK_ENTITIES.register("activated_reinforced_deepslate_block_entity", () -> BlockEntityType.Builder.of(ActivatedReinforcedDeepslateBlockEntity::new, ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()).build(null));
+    public static final RegistryObject<BlockEntityType<ResonantReinforcedDeepslateBlockEntity>> RESONANT_REINFORCED_DEEPSLATE_BLOCK_ENTITY =
+                BLOCK_ENTITIES.register("resonant_reinforced_deepslate_block_entity", () -> BlockEntityType.Builder.of(ResonantReinforcedDeepslateBlockEntity::new, ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()).build(null));
+
 
 
     public static void register(IEventBus bus){

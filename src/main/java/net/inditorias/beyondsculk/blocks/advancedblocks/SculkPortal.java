@@ -2,18 +2,13 @@ package net.inditorias.beyondsculk.blocks.advancedblocks;
 
 import net.inditorias.beyondsculk.blocks.AxisBlock;
 import net.inditorias.beyondsculk.blocks.ModBlocks;
-import net.inditorias.beyondsculk.world.dimension.ModDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -122,14 +117,14 @@ public class SculkPortal extends AxisBlock {
 
     }
 
-    public void reflectEntity(Entity entity){
-        if(entity instanceof Player) {
+    public void reflectEntity(Entity entity) {
+        if (entity instanceof Player) {
             Vec3 vec3 = entity.getDeltaMovement();
             RandomSource r = RandomSource.createNewThreadLocalInstance();
             entity.setDeltaMovement(
-                    ((r.nextDouble() * 4) - 2) * vec3.x,
-                    ((r.nextDouble() * 4) - 2) * vec3.y,
-                    ((r.nextDouble() * 4) - 2) * vec3.z
+                    ((r.nextDouble() * 4) - 2) * vec3.x + (r.nextDouble() - 0.5) / 2,
+                    ((r.nextDouble() * 4) - 2) * vec3.y + (r.nextDouble() - 0.5) / 2,
+                    ((r.nextDouble() * 4) - 2) * vec3.z + (r.nextDouble() - 0.5) / 2
             );
         }
     }
