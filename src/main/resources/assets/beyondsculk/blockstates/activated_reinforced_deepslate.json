@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "state=0": {"model": "beyondsculk:block/activated_reinforced_deepslate_0"},
+    "state=1": {"model": "beyondsculk:block/activated_reinforced_deepslate_1"},
+    "state=2": {"model": "beyondsculk:block/activated_reinforced_deepslate_2"}
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "beyondsculk:block/ancient_portal_ns"
+    },
+    "axis=z": {
+      "model": "beyondsculk:block/ancient_portal_ew"
+    }
+  }
+}
