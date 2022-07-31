@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "beyondsculk:block/resonant_reinforced_deepslate_bottom",
+    "side": "beyondsculk:block/resonant_reinforced_deepslate_side",
+    "top": "beyondsculk:block/resonant_reinforced_deepslate_top"
+  }
+}

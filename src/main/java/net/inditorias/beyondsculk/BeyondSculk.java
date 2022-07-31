@@ -5,6 +5,8 @@ import net.inditorias.beyondsculk.blockentities.ModBlockEntities;
 import net.inditorias.beyondsculk.blocks.ModBlocks;
 import net.inditorias.beyondsculk.fluid.ModFluids;
 import net.inditorias.beyondsculk.items.ModItems;
+import net.inditorias.beyondsculk.particle.ModParticles;
+import net.inditorias.beyondsculk.world.dimension.ModDimensions;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,6 +31,8 @@ public class BeyondSculk
         ModBlockEntities.register(modEventBus);
         ModItems.register(modEventBus);
         ModFluids.register(modEventBus);
+        ModParticles.register(modEventBus);
+        ModDimensions.register();
 
         modEventBus.addListener(this::commonSetup);
 
@@ -48,7 +52,7 @@ public class BeyondSculk
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            
+            LOGGER.error("Load Beyond Sculk");
         }
     }
 }

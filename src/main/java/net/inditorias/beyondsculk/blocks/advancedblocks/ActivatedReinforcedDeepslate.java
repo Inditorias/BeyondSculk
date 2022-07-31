@@ -3,6 +3,7 @@ package net.inditorias.beyondsculk.blocks.advancedblocks;
 import net.inditorias.beyondsculk.blockentities.ModBlockEntities;
 import net.inditorias.beyondsculk.blockentities.advanced.ActivatedReinforcedDeepslateBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -12,29 +13,24 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jetbrains.annotations.Nullable;
 
 public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
-
-    public static final IntegerProperty STATE = IntegerProperty.create("state", 0, 2);
+    public static final IntegerProperty SOULS = IntegerProperty.create("souls", 0, 16);
 
     public ActivatedReinforcedDeepslate(Properties properties) {
         super(properties);
     }
 
     public static int lightLevel(BlockState state){
-        switch (state.getValue(STATE)){
-            case 0:return 6;
-            case 1: return 3;
-            case 2: return 12;
-            default: return 0;
-        }
+       return 6;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> stateBuilder) {
-        stateBuilder.add(STATE);
+        stateBuilder.add(SOULS);
     }
 
     @Nullable

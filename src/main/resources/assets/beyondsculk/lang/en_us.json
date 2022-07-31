@@ -1,4 +1,6 @@
 {
   "item.beyondsculk.soul_water_bottle": "Bottle of Soul Water",
-  "block.beyondsculk.activated_reinforced_deepslate": "Activated Reinforced Deepslate"
+  "block.beyondsculk.activated_reinforced_deepslate": "Activated Reinforced Deepslate",
+  "block.beyondsculk.unstable_reinforced_deepslate": "Unstable Reinforced Deepslate",
+  "block.beyondsculk.resonant_reinforced_deepslate": "Resonant Reinforced Deepslate"
 }

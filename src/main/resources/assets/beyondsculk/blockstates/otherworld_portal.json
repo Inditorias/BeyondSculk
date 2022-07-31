@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "beyondsculk:block/otherworld_portal_ns"
+    },
+    "axis=z": {
+      "model": "beyondsculk:block/otherworld_portal_ew"
+    }
+  }
+}
