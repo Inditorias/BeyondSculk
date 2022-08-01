@@ -1,6 +1,7 @@
 package net.inditorias.beyondsculk.items;
 
 import net.inditorias.beyondsculk.BeyondSculk;
+import net.inditorias.beyondsculk.items.advanced.ResonantCatalyst;
 import net.inditorias.beyondsculk.items.advanced.SoulWaterBottle;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -16,7 +17,7 @@ public class ModItems {
 
     public static final RegistryObject<Item> BOTTLE_OF_SOUL_WATER = ITEMS.register("soul_water_bottle", () ->
             new SoulWaterBottle(new Item.Properties().stacksTo(16).tab(CreativeModeTab.TAB_BREWING)));
-    public static final RegistryObject<Item> RESONANT_CATALYST = ITEMS.register("resonant_catalyst", () -> new SoulWaterBottle(new Item.Properties()));
+    public static final RegistryObject<Item> RESONANT_CATALYST = ITEMS.register("resonant_catalyst", () -> new ResonantCatalyst(new Item.Properties()));
     public static void register(IEventBus bus){
         ITEMS.register(bus);
     }
