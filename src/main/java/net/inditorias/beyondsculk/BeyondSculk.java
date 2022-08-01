@@ -6,6 +6,8 @@ import net.inditorias.beyondsculk.blocks.ModBlocks;
 import net.inditorias.beyondsculk.fluid.ModFluids;
 import net.inditorias.beyondsculk.items.ModItems;
 import net.inditorias.beyondsculk.particle.ModParticles;
+import net.inditorias.beyondsculk.villager.ModPOIs;
+import net.inditorias.beyondsculk.villager.ModVillagers;
 import net.inditorias.beyondsculk.world.dimension.ModDimensions;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -33,6 +35,8 @@ public class BeyondSculk
         ModFluids.register(modEventBus);
         ModParticles.register(modEventBus);
         ModDimensions.register();
+        ModPOIs.register(modEventBus);
+        ModVillagers.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 

@@ -33,7 +33,11 @@ public class ModBlocks {
         new ResonantReinforcedDeepslate(BlockBehaviour.Properties.of(Material.STONE)
                 .strength(55).explosionResistance(1200)
                 .lightLevel(state -> 12).sound(SoundType.DEEPSLATE)), CreativeModeTab.TAB_BUILDING_BLOCKS);
+    public static final RegistryObject<Block> RESONANT_PORTAL_BLOCK = registerBlockWithoutBlockItem("resonant_portal_blcok", () -> new ResonantPortalBlock(BlockBehaviour.Properties.of(Material.PORTAL).lightLevel(state -> 12)));
 
+    private static <T extends Block> RegistryObject<Block> registerBlockWithoutBlockItem(String name, Supplier<T> block) {
+        return BLOCKS.register(name, block);
+    }
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, CreativeModeTab tab) {
@@ -47,9 +51,6 @@ public class ModBlocks {
         return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().tab(tab)));
     }
 
-    private static <T extends Block> RegistryObject<T> registerBlockWithoutBlockItem(String name, Supplier<T> block) {
-        return BLOCKS.register(name, block);
-    }
 
     public static void register(IEventBus bus){
         BLOCKS.register(bus);
