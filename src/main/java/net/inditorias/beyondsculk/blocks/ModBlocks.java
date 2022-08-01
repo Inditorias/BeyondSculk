@@ -23,17 +23,21 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> ACTIVATED_REINFORCED_DEEPSLATE_BLOCK = registerBlock("activated_reinforced_deepslate", () ->
         new ActivatedReinforcedDeepslate(BlockBehaviour.Properties.of(Material.STONE)
-                .strength(55).explosionResistance(1200)
+                .strength(-1).explosionResistance(12000)
                 .lightLevel(state -> 6).sound(SoundType.DEEPSLATE)), CreativeModeTab.TAB_BUILDING_BLOCKS);
     public static final RegistryObject<Block> UNSTABLE_REINFORCED_DEEPSLATE_BLOCK = registerBlock("unstable_reinforced_deepslate", () ->
         new UnstableReinforcedDeepslate(BlockBehaviour.Properties.of(Material.STONE)
-                .strength(55).explosionResistance(1200)
+                .strength(-1).explosionResistance(12000)
                 .lightLevel(state -> 3).sound(SoundType.DEEPSLATE)), CreativeModeTab.TAB_BUILDING_BLOCKS);
     public static final RegistryObject<Block> RESONANT_REINFORCED_DEEPSLATE_BLOCK = registerBlock("resonant_reinforced_deepslate", () ->
         new ResonantReinforcedDeepslate(BlockBehaviour.Properties.of(Material.STONE)
-                .strength(55).explosionResistance(1200)
+                .strength(-1).explosionResistance(12000)
                 .lightLevel(state -> 12).sound(SoundType.DEEPSLATE)), CreativeModeTab.TAB_BUILDING_BLOCKS);
-    public static final RegistryObject<Block> RESONANT_PORTAL_BLOCK = registerBlockWithoutBlockItem("resonant_portal_blcok", () -> new ResonantPortalBlock(BlockBehaviour.Properties.of(Material.PORTAL).lightLevel(state -> 12)));
+
+    public static final RegistryObject<Block> OTHERWORLD_PORTAL_BLOCK = registerBlock("otherworld_portal_block", () ->
+            new OtherworldPortal(BlockBehaviour.Properties.of(Material.PORTAL).noCollission().strength(-1.0F).sound(SoundType.GLASS).lightLevel(context -> 12)), CreativeModeTab.TAB_DECORATIONS);
+    public static final RegistryObject<Block> SCULK_PORTAL_BLOCK = registerBlock("sculk_portal_block", () ->
+            new OtherworldPortal(BlockBehaviour.Properties.of(Material.PORTAL).noCollission().strength(-1.0F).sound(SoundType.GLASS).lightLevel(context -> 5)), CreativeModeTab.TAB_DECORATIONS);
 
     private static <T extends Block> RegistryObject<Block> registerBlockWithoutBlockItem(String name, Supplier<T> block) {
         return BLOCKS.register(name, block);

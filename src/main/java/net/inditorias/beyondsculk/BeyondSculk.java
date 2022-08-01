@@ -9,6 +9,8 @@ import net.inditorias.beyondsculk.particle.ModParticles;
 import net.inditorias.beyondsculk.villager.ModPOIs;
 import net.inditorias.beyondsculk.villager.ModVillagers;
 import net.inditorias.beyondsculk.world.dimension.ModDimensions;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -41,6 +43,8 @@ public class BeyondSculk
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
+
+//        ItemBlockRenderTypes.setRenderLayer(ModBlocks.RESONANT_PORTAL_BLOCK.get(), RenderType.translucent());
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)

@@ -3,7 +3,8 @@ package net.inditorias.beyondsculk.blocks.advancedblocks;
 import net.inditorias.beyondsculk.blockentities.ModBlockEntities;
 import net.inditorias.beyondsculk.blockentities.advanced.ActivatedReinforcedDeepslateBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -13,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +39,7 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
         return new ActivatedReinforcedDeepslateBlockEntity(pos, state);
     }
 
-    /*Block Eintity*/
+    /*Block Entity*/
 
     @Override
     public RenderShape getRenderShape(BlockState blockState) {
@@ -56,5 +56,10 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return createTickerHelper(type, ModBlockEntities.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK_ENTITY.get(), ActivatedReinforcedDeepslateBlockEntity::tick);
+    }
+
+    @Override
+    public void randomTick(BlockState blockState, ServerLevel level, BlockPos pos, RandomSource randomSource) {
+
     }
 }

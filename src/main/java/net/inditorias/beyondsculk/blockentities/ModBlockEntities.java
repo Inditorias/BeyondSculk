@@ -3,7 +3,6 @@ package net.inditorias.beyondsculk.blockentities;
 import net.inditorias.beyondsculk.BeyondSculk;
 import net.inditorias.beyondsculk.blockentities.advanced.ActivatedReinforcedDeepslateBlockEntity;
 import net.inditorias.beyondsculk.blocks.ModBlocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
