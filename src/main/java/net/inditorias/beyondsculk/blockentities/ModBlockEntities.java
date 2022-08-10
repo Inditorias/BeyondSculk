@@ -16,6 +16,7 @@ public class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<ActivatedReinforcedDeepslateBlockEntity>> ACTIVATED_REINFORCED_DEEPSLATE_BLOCK_ENTITY =
             BLOCK_ENTITIES.register("activated_reinforced_deepslate_block_entity", () -> BlockEntityType.Builder.of(ActivatedReinforcedDeepslateBlockEntity::new, ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()).build(null));
 
+
     public static void register(IEventBus bus){
         BLOCK_ENTITIES.register(bus);
     }

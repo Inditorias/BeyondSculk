@@ -5,7 +5,6 @@ import net.inditorias.beyondsculk.blockentities.ModBlockEntities;
 import net.inditorias.beyondsculk.blocks.ModBlocks;
 import net.inditorias.beyondsculk.fluid.ModFluids;
 import net.inditorias.beyondsculk.items.ModItems;
-import net.inditorias.beyondsculk.particle.ModParticles;
 import net.inditorias.beyondsculk.villager.ModPOIs;
 import net.inditorias.beyondsculk.villager.ModVillagers;
 import net.inditorias.beyondsculk.world.dimension.ModDimensions;
@@ -35,7 +34,6 @@ public class BeyondSculk
         ModBlockEntities.register(modEventBus);
         ModItems.register(modEventBus);
         ModFluids.register(modEventBus);
-        ModParticles.register(modEventBus);
         ModDimensions.register();
         ModPOIs.register(modEventBus);
         ModVillagers.register(modEventBus);

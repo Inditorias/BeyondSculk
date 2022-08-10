@@ -3,6 +3,7 @@ package net.inditorias.beyondsculk.items;
 import net.inditorias.beyondsculk.BeyondSculk;
 import net.inditorias.beyondsculk.items.advanced.SoulWaterBottle;
 import net.inditorias.beyondsculk.items.advanced.TempOtherworldCatalyst;
+import net.inditorias.beyondsculk.items.advanced.TempSculkCatalyst;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -18,6 +19,7 @@ public class ModItems {
     public static final RegistryObject<Item> BOTTLE_OF_SOUL_WATER = ITEMS.register("soul_water_bottle", () ->
             new SoulWaterBottle(new Item.Properties().stacksTo(16).tab(CreativeModeTab.TAB_BREWING)));
     public static final RegistryObject<Item> TEMP_OTHERWORLD_CATALYST = ITEMS.register("temp_otherworld_catalyst", () -> new TempOtherworldCatalyst(new Item.Properties()));
+    public static final RegistryObject<Item> TEMP_SCULK_CATALYST = ITEMS.register("temp_sculk_catalyst", () -> new TempSculkCatalyst(new Item.Properties()));
     public static void register(IEventBus bus){
         ITEMS.register(bus);
     }

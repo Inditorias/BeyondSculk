@@ -37,7 +37,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> OTHERWORLD_PORTAL_BLOCK = registerBlock("otherworld_portal_block", () ->
             new OtherworldPortal(BlockBehaviour.Properties.of(Material.PORTAL).noCollission().strength(-1.0F).sound(SoundType.GLASS).lightLevel(context -> 12)), CreativeModeTab.TAB_DECORATIONS);
     public static final RegistryObject<Block> SCULK_PORTAL_BLOCK = registerBlock("sculk_portal_block", () ->
-            new OtherworldPortal(BlockBehaviour.Properties.of(Material.PORTAL).noCollission().strength(-1.0F).sound(SoundType.GLASS).lightLevel(context -> 5)), CreativeModeTab.TAB_DECORATIONS);
+            new SculkPortal(BlockBehaviour.Properties.of(Material.PORTAL).noCollission().strength(-1.0F).sound(SoundType.GLASS).lightLevel(context -> 5)), CreativeModeTab.TAB_DECORATIONS);
 
     private static <T extends Block> RegistryObject<Block> registerBlockWithoutBlockItem(String name, Supplier<T> block) {
         return BLOCKS.register(name, block);

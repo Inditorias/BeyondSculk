@@ -2,9 +2,14 @@ package net.inditorias.beyondsculk.blocks.advancedblocks;
 
 import net.inditorias.beyondsculk.blockentities.ModBlockEntities;
 import net.inditorias.beyondsculk.blockentities.advanced.ActivatedReinforcedDeepslateBlockEntity;
+import net.inditorias.beyondsculk.blocks.ModBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -60,6 +65,11 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
 
     @Override
     public void randomTick(BlockState blockState, ServerLevel level, BlockPos pos, RandomSource randomSource) {
-
+//        for (Direction direction : Direction.Plane.VERTICAL) {
+//            BlockPos framePos = pos.relative(direction);
+//            if (((SculkPortal) ModBlocks.SCULK_PORTAL_BLOCK.get()).trySpawnPortal(level, framePos)) {
+//                level.playSound(null, framePos, SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.BLOCKS, 1.0F, 1.0F);
+//            }
+//        }
     }
 }
