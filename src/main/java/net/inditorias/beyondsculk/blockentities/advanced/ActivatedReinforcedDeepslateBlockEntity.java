@@ -3,7 +3,9 @@ package net.inditorias.beyondsculk.blockentities.advanced;
 import net.inditorias.beyondsculk.blockentities.ModBlockEntities;
 import net.inditorias.beyondsculk.blocks.ModBlocks;
 import net.inditorias.beyondsculk.blocks.advancedblocks.ActivatedReinforcedDeepslate;
+import net.inditorias.beyondsculk.blocks.advancedblocks.SculkPortal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -18,6 +20,8 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ActivatedReinforcedDeepslateBlockEntity extends BlockEntity {
     public ActivatedReinforcedDeepslateBlockEntity(BlockPos pos, BlockState state) {
@@ -40,7 +44,25 @@ public class ActivatedReinforcedDeepslateBlockEntity extends BlockEntity {
             } else {
                 level.setBlock(pos, state.setValue(ActivatedReinforcedDeepslate.SOULS, 0), 3);
             }
+        }else if(!getNeighborBlocks(level, pos).contains(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+            for (Direction direction : Direction.Plane.VERTICAL) {
+                BlockPos framePos = pos.relative(direction);
+                if (((SculkPortal) ModBlocks.SCULK_PORTAL_BLOCK.get()).trySpawnPortal(level, framePos)) {
+                    level.playSound(null, framePos, SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.BLOCKS, 1.0F, 1.0F);
+                }
+            }
         }
+    }
+
+    private static Set<Block> getNeighborBlocks(Level level, BlockPos pos){
+        HashSet<Block> neighbors = new HashSet<Block>();
+        neighbors.add(level.getBlockState(pos.below()).getBlock());
+        neighbors.add(level.getBlockState(pos.above()).getBlock());
+        neighbors.add(level.getBlockState(pos.west()).getBlock());
+        neighbors.add(level.getBlockState(pos.east()).getBlock());
+        neighbors.add(level.getBlockState(pos.south()).getBlock());
+        neighbors.add(level.getBlockState(pos.north()).getBlock());
+        return neighbors;
     }
 
     private static BlockPos chooseNeighbor(Level level, BlockPos pos){
