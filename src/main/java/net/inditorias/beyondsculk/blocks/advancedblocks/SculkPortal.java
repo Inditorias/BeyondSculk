@@ -11,7 +11,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -25,6 +28,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.portal.PortalShape;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
@@ -66,6 +70,7 @@ public class SculkPortal extends AxisBlock {
         SculkPortal.Size SculkPortal$size = this.isPortal(level, pos);
         if (SculkPortal$size != null && !onTrySpawnPortal(level, pos, SculkPortal$size)) {
             SculkPortal$size.placePortalBlocks();
+
             return true;
         } else {
             return false;
@@ -90,7 +95,7 @@ public class SculkPortal extends AxisBlock {
         }
     }
     @Nullable
-    public SculkPortal.Size isPortal(LevelAccessor level, BlockPos pos) {
+    public static SculkPortal.Size isPortal(LevelAccessor level, BlockPos pos) {
         SculkPortal.Size size = new Size(level, pos, Direction.Axis.X);
         if (size.isValid() && size.portalBlockCount == 0) {
             return size;
@@ -110,7 +115,23 @@ public class SculkPortal extends AxisBlock {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-       //TODO: Hurt Entity, maybe yeet them back
+       reflectEntity(entity);
+       if((entity instanceof Player p) && !p.isCreative()){
+           entity.hurt(DamageSource.OUT_OF_WORLD, 3f);
+       }
+
+    }
+
+    public void reflectEntity(Entity entity){
+        if(entity instanceof Player) {
+            Vec3 vec3 = entity.getDeltaMovement();
+            RandomSource r = RandomSource.createNewThreadLocalInstance();
+            entity.setDeltaMovement(
+                    ((r.nextDouble() * 4) - 2) * vec3.x,
+                    ((r.nextDouble() * 4) - 2) * vec3.y,
+                    ((r.nextDouble() * 4) - 2) * vec3.z
+            );
+        }
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -181,6 +202,14 @@ public class SculkPortal extends AxisBlock {
         private int height;
         private int width;
 
+        @Nullable
+        public BlockPos getBottomLeft(){
+            return bottomLeft;
+        }
+
+        public Direction.Axis getAxis(){
+            return axis;
+        }
         public Size(LevelAccessor level, BlockPos pos, Direction.Axis axis) {
             super(level, pos, axis);
             this.level = level;
@@ -216,13 +245,17 @@ public class SculkPortal extends AxisBlock {
             int i;
             for(i = 0; i < 22; ++i) {
                 BlockPos blockpos = pos.relative(directionIn, i);
-                if(!this.canConnect(this.level.getBlockState(blockpos)) || !(this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()))) {
+                if(!this.canConnect(this.level.getBlockState(blockpos)) ||
+                        !(this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()) ||
+                        this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))
+                ) {
                     break;
                 }
             }
 
             BlockPos framePos = pos.relative(directionIn, i);
-            return this.level.getBlockState(framePos).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()) ? i : 0;
+            return (this.level.getBlockState(framePos).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()) ||
+                    (this.level.getBlockState(framePos.below()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))) ? i : 0;
         }
 
         public int getHeight() {
@@ -244,18 +277,24 @@ public class SculkPortal extends AxisBlock {
                     }
 
                     Block block = blockstate.getBlock();
-                    if (block == ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()) {
+                    if (block == ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get() || block == ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) {
                         ++this.portalBlockCount;
                     }
 
                     if (i == 0) {
                         BlockPos framePos = blockpos.relative(this.leftDir);
-                        if (!(this.level.getBlockState(framePos).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()))) {
+                        if (!(
+                                this.level.getBlockState(framePos).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get())
+                                || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
+                        )) {
                             break label56;
                         }
                     } else if (i == this.width - 1) {
                         BlockPos framePos = blockpos.relative(this.rightDir);
-                        if (!(this.level.getBlockState(framePos).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()))) {
+                        if (!(
+                                this.level.getBlockState(framePos).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get())
+                                        || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
+                        )) {
                             break label56;
                         }
                     }
@@ -264,7 +303,10 @@ public class SculkPortal extends AxisBlock {
 
             for(int j = 0; j < this.width; ++j) {
                 BlockPos framePos = this.bottomLeft.relative(this.rightDir, j).above(this.height);
-                if (!(this.level.getBlockState(framePos).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()))) {
+                if (!(
+                        this.level.getBlockState(framePos).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get())
+                                || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
+                )) {
                     this.height = 0;
                     break;
                 }
@@ -299,6 +341,8 @@ public class SculkPortal extends AxisBlock {
             }
 
         }
+
+
 
         private boolean isPortalCountValidForSize() {
             return this.portalBlockCount >= this.width * this.height;

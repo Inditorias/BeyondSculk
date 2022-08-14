@@ -1,6 +1,7 @@
 package net.inditorias.beyondsculk;
 
 import com.mojang.logging.LogUtils;
+import net.inditorias.beyondsculk.activities.ModActivities;
 import net.inditorias.beyondsculk.blockentities.ModBlockEntities;
 import net.inditorias.beyondsculk.blocks.ModBlocks;
 import net.inditorias.beyondsculk.fluid.ModFluids;
@@ -37,6 +38,7 @@ public class BeyondSculk
         ModDimensions.register();
         ModPOIs.register(modEventBus);
         ModVillagers.register(modEventBus);
+        ModActivities.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
