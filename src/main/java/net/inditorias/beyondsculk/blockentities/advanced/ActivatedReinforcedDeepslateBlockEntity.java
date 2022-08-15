@@ -38,8 +38,8 @@ public class ActivatedReinforcedDeepslateBlockEntity extends BlockEntity {
                 BlockPos framePos = pos.relative(direction);
                 if (((SculkPortal) ModBlocks.SCULK_PORTAL_BLOCK.get()).trySpawnPortal(level, framePos)) {
                     level.playSound(null, framePos, SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.BLOCKS, 1.0F, 0);
-                    break;
                 }
+                break;
             }
 
         }

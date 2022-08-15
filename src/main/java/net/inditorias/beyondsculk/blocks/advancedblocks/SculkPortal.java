@@ -10,6 +10,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -118,7 +119,7 @@ public class SculkPortal extends AxisBlock {
     }
 
     public void reflectEntity(Entity entity) {
-        if (entity instanceof Player) {
+        if (entity instanceof Player || entity instanceof Projectile) {
             Vec3 vec3 = entity.getDeltaMovement();
             RandomSource r = RandomSource.createNewThreadLocalInstance();
             entity.setDeltaMovement(

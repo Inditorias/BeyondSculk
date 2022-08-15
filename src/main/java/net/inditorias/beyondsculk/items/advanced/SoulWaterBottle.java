@@ -69,7 +69,10 @@ public class SoulWaterBottle extends PotionItem {
         BlockState state = level.getBlockState(pos);
 
         if(state.getBlock().equals(Blocks.REINFORCED_DEEPSLATE)){
-            level.playSound(player, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(player, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, .3F, 0);
+            if(!player.isCreative()){
+                stack.shrink(1);
+            }
             if(!player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE))){
                 player.drop(new ItemStack(Items.GLASS_BOTTLE), false);
             }
@@ -81,6 +84,9 @@ public class SoulWaterBottle extends PotionItem {
         }
         if(state.getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get())){
             level.playSound(player, pos, SoundEvents.SOUL_ESCAPE, SoundSource.BLOCKS, 1.0F, 0);
+            if(!player.isCreative()){
+                stack.shrink(1);
+            }
             if(!player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE))){
                 player.drop(new ItemStack(Items.GLASS_BOTTLE), false);
             }

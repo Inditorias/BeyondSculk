@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
         return createTickerHelper(type, ModBlockEntities.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK_ENTITY.get(), ActivatedReinforcedDeepslateBlockEntity::tick);
     }
 
+    /* End Block Entity */
 
     @Override
     public boolean isRandomlyTicking(BlockState state) {
@@ -102,7 +104,7 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
         if(wardens.isEmpty() || switchInt > weight) {
             if(level.setBlock(pos, ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get().defaultBlockState(), 18)){
                 if (ActivatedReinforcedDeepslate.AttemptSummonWarden(level, pos)) {
-                    level.playSound(null, pos, SoundEvents.WARDEN_EMERGE, SoundSource.BLOCKS, 1f, 0);
+                    level.playSound(null, pos, SoundEvents.WARDEN_EMERGE, SoundSource.BLOCKS, .4f, 0);
                 }
             }
 
@@ -123,24 +125,42 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
                     pos.getX(), pos.getY(), pos.getZ(), healing.position().x - pos.getX(), healing.position().y - pos.getY(), healing.position().z - pos.getZ());
             level.playSound(null, pos, SoundEvents.SOUL_ESCAPE, SoundSource.BLOCKS, 1.2f, 0);
         }
-        ActivatedReinforcedDeepslate.Size frameSize = isUnstableFrame(level, pos);
-        if(frameSize != null && frameSize.bottomLeft != null){
-            if(frameSize.axis == Direction.Axis.X){
-                spawnPortalBoss(level, frameSize.bottomLeft.offset(frameSize.width/2, 0, 0));
-            }else{
-                spawnPortalBoss(level, frameSize.bottomLeft.offset(0, 0, frameSize.width/2));
+
+        for (Direction direction : Direction.Plane.VERTICAL) {
+            BlockPos framePos = pos.relative(direction);
+            ActivatedReinforcedDeepslate.Size frameSize = isUnstableFrame(level, framePos, getPortalAxis(level, pos));
+            if(frameSize != null && frameSize.bottomLeft != null){
+                if(frameSize.axis == Direction.Axis.X){
+                    spawnPortalBoss(level, frameSize.bottomLeft.offset(frameSize.width/2, -1, 0));
+                }else{
+                    spawnPortalBoss(level, frameSize.bottomLeft.offset(0, -1, frameSize.width/2));
+                }
             }
+            break;
         }
+
+
 
     }
 
-    public ActivatedReinforcedDeepslate.Size isUnstableFrame(LevelAccessor level, BlockPos pos) {
-        ActivatedReinforcedDeepslate.Size ActivatedReinforcedDeepslate$size = new ActivatedReinforcedDeepslate.Size(level, pos, Direction.Axis.X);
-        if (ActivatedReinforcedDeepslate$size.isValid() && ActivatedReinforcedDeepslate$size.portalBlockCount == 0) {
+    private Direction.Axis getPortalAxis(Level level, BlockPos pos){
+        for(int i = -1; i < 2; i++){
+            for(int j = -1; j < 2; j++){
+                for(int k = -1; k < 2; k++){
+                    if(level.getBlockState(pos.offset(i, j, k)).is(ModBlocks.SCULK_PORTAL_BLOCK.get())){
+                        return level.getBlockState(pos.offset(i, j, k)).getValue(AxisBlock.AXIS);
+                    }
+                }
+            }
+        }
+        return Direction.Axis.X;
+    }
+    public ActivatedReinforcedDeepslate.Size isUnstableFrame(LevelAccessor level, BlockPos pos, Direction.Axis axis) {
+        ActivatedReinforcedDeepslate.Size ActivatedReinforcedDeepslate$size = new ActivatedReinforcedDeepslate.Size(level, pos,axis);
+        if (ActivatedReinforcedDeepslate$size.isValid()) {
             return ActivatedReinforcedDeepslate$size;
         } else {
-            ActivatedReinforcedDeepslate.Size ActivatedReinforcedDeepslate$size1 = new ActivatedReinforcedDeepslate.Size(level, pos, Direction.Axis.Z);
-            return ActivatedReinforcedDeepslate$size1.isValid() && ActivatedReinforcedDeepslate$size1.portalBlockCount == 0 ? ActivatedReinforcedDeepslate$size1 : null;
+            return null;
         }
     }
 
@@ -309,6 +329,7 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
 
     private void spawnPortalBoss(ServerLevel level, BlockPos pos){
         //TODO: Make portal boss model and mob, then summon it
+        while(!level.setBlock(pos, ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get().defaultBlockState(), 18));
     }
 
     public static class Size {
@@ -317,7 +338,7 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
         private final Direction rightDir;
         private final Direction leftDir;
         private int portalBlockCount;
-
+        @Nullable
         private BlockPos bottomLeft;
         private int height;
         private int width;
@@ -333,7 +354,7 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
                 this.rightDir = Direction.SOUTH;
             }
 
-            for(BlockPos blockpos = pos; pos.getY() > blockpos.getY() - 21 && pos.getY() > 0 && this.canConnect(level.getBlockState(pos.below())); pos = pos.below()) {
+            for(BlockPos blockpos = pos; pos.getY() > blockpos.getY() - 21 && pos.getY() > -64 && this.canConnect(level.getBlockState(pos.below())); pos = pos.below()) {
             }
 
             int i = this.getDistanceUntilEdge(pos, this.leftDir) - 1;
@@ -356,19 +377,22 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
             int i;
             for(i = 0; i < 22; ++i) {
                 BlockPos blockpos = pos.relative(directionIn, i);
-                if(!this.canConnect(this.level.getBlockState(blockpos)) ||
-                        !(this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()) ||
-                                this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))
-                ) {
+                if(!this.canConnect(this.level.getBlockState(blockpos)) || !(this.level.getBlockState(blockpos.below()).is(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))) {
                     break;
                 }
             }
 
             BlockPos framePos = pos.relative(directionIn, i);
-            return (this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()) ||
-                    (this.level.getBlockState(framePos.below()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))) ? i : 0;
+            return this.level.getBlockState(framePos).is(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) ? i : 0;
         }
 
+        public int getHeight() {
+            return this.height;
+        }
+
+        public int getWidth() {
+            return this.width;
+        }
 
         protected int calculatePortalHeight() {
             label56:
@@ -381,24 +405,18 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
                     }
 
                     Block block = blockstate.getBlock();
-                    if (block == ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get() || block == ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) {
+                    if (block == ModBlocks.SCULK_PORTAL_BLOCK.get()) {
                         ++this.portalBlockCount;
                     }
 
                     if (i == 0) {
                         BlockPos framePos = blockpos.relative(this.leftDir);
-                        if (!(
-                                this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())
-                                        || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
-                        )) {
+                        if (!(this.level.getBlockState(framePos).is(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))) {
                             break label56;
                         }
                     } else if (i == this.width - 1) {
                         BlockPos framePos = blockpos.relative(this.rightDir);
-                        if (!(
-                                this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())
-                                        || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
-                        )) {
+                        if (!(this.level.getBlockState(framePos).is(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))) {
                             break label56;
                         }
                     }
@@ -407,10 +425,7 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
 
             for(int j = 0; j < this.width; ++j) {
                 BlockPos framePos = this.bottomLeft.relative(this.rightDir, j).above(this.height);
-                if (!(
-                        this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())
-                                || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
-                )) {
+                if (!(this.level.getBlockState(framePos).is(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))) {
                     this.height = 0;
                     break;
                 }
@@ -433,6 +448,25 @@ public class ActivatedReinforcedDeepslate extends BaseEntityBlock {
 
         public boolean isValid() {
             return this.bottomLeft != null && this.width >= 2 && this.width <= 21 && this.height >= 3 && this.height <= 21;
+        }
+
+        public void placePortalBlocks() {
+            for(int i = 0; i < this.width; ++i) {
+                BlockPos blockpos = this.bottomLeft.relative(this.rightDir, i);
+
+                for(int j = 0; j < this.height; ++j) {
+                    this.level.setBlock(blockpos.above(j), ModBlocks.SCULK_PORTAL_BLOCK.get().defaultBlockState().setValue(AxisBlock.AXIS, this.axis), 18);
+                }
+            }
+
+        }
+
+        private boolean isPortalCountValidForSize() {
+            return this.portalBlockCount >= this.width * this.height;
+        }
+
+        public boolean validatePortal() {
+            return this.isValid() && this.isPortalCountValidForSize();
         }
     }
     

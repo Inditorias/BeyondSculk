@@ -241,14 +241,13 @@ public class OtherworldPortal extends AxisBlock {
             for(i = 0; i < 22; ++i) {
                 BlockPos blockpos = pos.relative(directionIn, i);
                 if(!this.canConnect(this.level.getBlockState(blockpos)) ||
-                        !(this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())||
-                                this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))) {
+                        !this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())) {
                     break;
                 }
             }
 
             BlockPos framePos = pos.relative(directionIn, i);
-            return this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()) || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())  ? i : 0;
+            return this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())  ? i : 0;
         }
 
         public int getHeight() {
@@ -270,24 +269,21 @@ public class OtherworldPortal extends AxisBlock {
                     }
 
                     Block block = blockstate.getBlock();
-                    if (block == ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get() || block == ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) {
+                    if (block == ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()) {
                         ++this.portalBlockCount;
                     }
 
                     if (i == 0) {
                         BlockPos framePos = blockpos.relative(this.leftDir);
-                        if (!(
+                        if (!
                                 this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())
-                                        || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
-                        )) {
+                        ) {
                             break label56;
                         }
                     } else if (i == this.width - 1) {
                         BlockPos framePos = blockpos.relative(this.rightDir);
-                        if (!(
-                                this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())
-                                        || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
-                        )) {
+                        if (!
+                                this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())) {
                             break label56;
                         }
                     }
@@ -298,7 +294,7 @@ public class OtherworldPortal extends AxisBlock {
                 BlockPos framePos = this.bottomLeft.relative(this.rightDir, j).above(this.height);
                 if (!(
                         this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())
-                                || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
+
                 )) {
                     this.height = 0;
                     break;
