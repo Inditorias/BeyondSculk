@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import net.inditorias.beyondsculk.activities.ModActivities;
 import net.inditorias.beyondsculk.blockentities.ModBlockEntities;
 import net.inditorias.beyondsculk.blocks.ModBlocks;
+import net.inditorias.beyondsculk.blocks.Vanilla.VanillaBlocks;
 import net.inditorias.beyondsculk.fluid.ModFluids;
 import net.inditorias.beyondsculk.items.ModItems;
 import net.inditorias.beyondsculk.villager.ModPOIs;
@@ -40,7 +41,7 @@ public class BeyondSculk
         ModPOIs.register(modEventBus);
         ModVillagers.register(modEventBus);
         ModActivities.register(modEventBus);
-
+        VanillaBlocks.register(modEventBus);
         GeckoLib.initialize();
 
         modEventBus.addListener(this::commonSetup);

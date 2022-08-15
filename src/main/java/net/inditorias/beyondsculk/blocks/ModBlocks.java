@@ -7,6 +7,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -34,10 +35,12 @@ public class ModBlocks {
                 .strength(-1).explosionResistance(12000)
                 .lightLevel(state -> 12).sound(SoundType.DEEPSLATE)), CreativeModeTab.TAB_BUILDING_BLOCKS);
 
-    public static final RegistryObject<Block> OTHERWORLD_PORTAL_BLOCK = registerBlock("otherworld_portal_block", () ->
-            new OtherworldPortal(BlockBehaviour.Properties.of(Material.PORTAL).noCollission().strength(-1.0F).sound(SoundType.GLASS).lightLevel(context -> 12)), CreativeModeTab.TAB_DECORATIONS);
-    public static final RegistryObject<Block> SCULK_PORTAL_BLOCK = registerBlock("sculk_portal_block", () ->
-            new SculkPortal(BlockBehaviour.Properties.of(Material.PORTAL).noCollission().strength(-1.0F).sound(SoundType.GLASS).lightLevel(context -> 5)), CreativeModeTab.TAB_DECORATIONS);
+    public static final RegistryObject<Block> OTHERWORLD_PORTAL_BLOCK = registerBlockWithoutBlockItem("otherworld_portal_block", () ->
+            new OtherworldPortal(BlockBehaviour.Properties.of(Material.PORTAL).noCollission().strength(-1.0F).sound(SoundType.GLASS).lightLevel(context -> 12)));
+    public static final RegistryObject<Block> SCULK_PORTAL_BLOCK = registerBlockWithoutBlockItem("sculk_portal_block", () ->
+            new SculkPortal(BlockBehaviour.Properties.of(Material.PORTAL).noCollission().strength(-1.0F).sound(SoundType.GLASS).lightLevel(context -> 5)));
+    public static final RegistryObject<Block> SOUL_CAULDRON_BLOCK = registerBlockWithoutBlockItem("soul_cauldron_block", () ->
+            new SoulCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON)));
 
     private static <T extends Block> RegistryObject<Block> registerBlockWithoutBlockItem(String name, Supplier<T> block) {
         return BLOCKS.register(name, block);
