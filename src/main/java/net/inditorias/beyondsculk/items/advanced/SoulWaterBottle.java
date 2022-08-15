@@ -2,13 +2,11 @@ package net.inditorias.beyondsculk.items.advanced;
 
 import net.inditorias.beyondsculk.blocks.ModBlocks;
 import net.inditorias.beyondsculk.blocks.advancedblocks.ActivatedReinforcedDeepslate;
-import net.inditorias.beyondsculk.items.ModItems;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -25,7 +23,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -77,14 +74,13 @@ public class SoulWaterBottle extends PotionItem {
                 player.drop(new ItemStack(Items.GLASS_BOTTLE), false);
             }
             player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
-            level.gameEvent((Entity) null, GameEvent.FLUID_PLACE, pos);
             level.setBlockAndUpdate(pos, ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get().
                     defaultBlockState().
                     setValue(ActivatedReinforcedDeepslate.SOULS, RandomSource.createNewThreadLocalInstance().
                             nextIntBetweenInclusive(8, 16)));
         }
-        if(state.getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK)){
-            level.playSound(player, pos, SoundEvents.SOUL_ESCAPE, SoundSource.BLOCKS, 1.0F, 1.0F);
+        if(state.getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get())){
+            level.playSound(player, pos, SoundEvents.SOUL_ESCAPE, SoundSource.BLOCKS, 1.0F, 0);
             if(!player.getInventory().add(new ItemStack(Items.GLASS_BOTTLE))){
                 player.drop(new ItemStack(Items.GLASS_BOTTLE), false);
             }

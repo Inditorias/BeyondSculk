@@ -2,18 +2,13 @@ package net.inditorias.beyondsculk.blocks.advancedblocks;
 
 import net.inditorias.beyondsculk.blocks.AxisBlock;
 import net.inditorias.beyondsculk.blocks.ModBlocks;
-import net.inditorias.beyondsculk.world.dimension.ModDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -77,7 +72,7 @@ public class SculkPortal extends AxisBlock {
         }
     }
     public static boolean onTrySpawnPortal(LevelAccessor world, BlockPos pos, SculkPortal.Size size) {
-        return MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size));
+        return MinecraftForge.EVENT_BUS.post(new PortalSpawnEvent(world, pos, world.getBlockState(pos), size));
     }
 
     @Cancelable
@@ -115,21 +110,21 @@ public class SculkPortal extends AxisBlock {
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-       reflectEntity(entity);
-       if((entity instanceof Player p) && !p.isCreative()){
-           entity.hurt(DamageSource.OUT_OF_WORLD, 3f);
-       }
+        reflectEntity(entity);
+        if((entity instanceof Player p) && !p.isCreative()){
+            entity.hurt(DamageSource.OUT_OF_WORLD, 3f);
+        }
 
     }
 
-    public void reflectEntity(Entity entity){
-        if(entity instanceof Player) {
+    public void reflectEntity(Entity entity) {
+        if (entity instanceof Player) {
             Vec3 vec3 = entity.getDeltaMovement();
             RandomSource r = RandomSource.createNewThreadLocalInstance();
             entity.setDeltaMovement(
-                    ((r.nextDouble() * 4) - 2) * vec3.x,
-                    ((r.nextDouble() * 4) - 2) * vec3.y,
-                    ((r.nextDouble() * 4) - 2) * vec3.z
+                    ((r.nextDouble() * 4) - 2) * vec3.x + (r.nextDouble() - 0.5) / 2,
+                    ((r.nextDouble() * 4) - 2) * vec3.y + (r.nextDouble() - 0.5) / 2,
+                    ((r.nextDouble() * 4) - 2) * vec3.z + (r.nextDouble() - 0.5) / 2
             );
         }
     }
@@ -191,7 +186,7 @@ public class SculkPortal extends AxisBlock {
         builder.add(AXIS);
     }
 
-    public static class Size extends PortalShape{
+    public static class Size {
         private final LevelAccessor level;
         private final Direction.Axis axis;
         private final Direction rightDir;
@@ -211,7 +206,6 @@ public class SculkPortal extends AxisBlock {
             return axis;
         }
         public Size(LevelAccessor level, BlockPos pos, Direction.Axis axis) {
-            super(level, pos, axis);
             this.level = level;
             this.axis = axis;
             if (axis == Direction.Axis.X) {
@@ -247,7 +241,7 @@ public class SculkPortal extends AxisBlock {
                 BlockPos blockpos = pos.relative(directionIn, i);
                 if(!this.canConnect(this.level.getBlockState(blockpos)) ||
                         !(this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get()) ||
-                        this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))
+                                this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))
                 ) {
                     break;
                 }
@@ -285,7 +279,7 @@ public class SculkPortal extends AxisBlock {
                         BlockPos framePos = blockpos.relative(this.leftDir);
                         if (!(
                                 this.level.getBlockState(framePos).getBlock().equals(ModBlocks.ACTIVATED_REINFORCED_DEEPSLATE_BLOCK.get())
-                                || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
+                                        || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
                         )) {
                             break label56;
                         }

@@ -73,7 +73,7 @@ public class OtherworldPortal extends AxisBlock {
         }
     }
     public static boolean onTrySpawnPortal(LevelAccessor world, BlockPos pos, OtherworldPortal.Size size) {
-        return MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size));
+        return MinecraftForge.EVENT_BUS.post(new PortalSpawnEvent(world, pos, world.getBlockState(pos), size));
     }
 
     @Cancelable
@@ -92,12 +92,12 @@ public class OtherworldPortal extends AxisBlock {
     }
     @Nullable
     public OtherworldPortal.Size isPortal(LevelAccessor level, BlockPos pos) {
-        OtherworldPortal.Size UndergardenPortalBlock$size = new Size(level, pos, Direction.Axis.X);
-        if (UndergardenPortalBlock$size.isValid() && UndergardenPortalBlock$size.portalBlockCount == 0) {
-            return UndergardenPortalBlock$size;
+        OtherworldPortal.Size OtherworldPortalBlock$size = new Size(level, pos, Direction.Axis.X);
+        if (OtherworldPortalBlock$size.isValid() && OtherworldPortalBlock$size.portalBlockCount == 0) {
+            return OtherworldPortalBlock$size;
         } else {
-            OtherworldPortal.Size UndergardenPortalBlock$size1 = new Size(level, pos, Direction.Axis.Z);
-            return UndergardenPortalBlock$size1.isValid() && UndergardenPortalBlock$size1.portalBlockCount == 0 ? UndergardenPortalBlock$size1 : null;
+            OtherworldPortal.Size OtherworldPortalBlock$size1 = new Size(level, pos, Direction.Axis.Z);
+            return OtherworldPortalBlock$size1.isValid() && OtherworldPortalBlock$size1.portalBlockCount == 0 ? OtherworldPortalBlock$size1 : null;
         }
     }
 
@@ -126,7 +126,7 @@ public class OtherworldPortal extends AxisBlock {
                     if(minecraftserver != null) {
                         ServerLevel destinationWorld = minecraftserver.getLevel(destination);
                         if(destinationWorld != null && minecraftserver.isNetherEnabled() && !entity.isPassenger()) {
-                            entity.level.getProfiler().push("undergarden_portal");
+                            entity.level.getProfiler().push("otherworld_portal");
                             entity.setPortalCooldown();
                             entity.changeDimension(destinationWorld, new OtherworldTeleporter(destinationWorld));
                             entity.level.getProfiler().pop();
@@ -142,7 +142,7 @@ public class OtherworldPortal extends AxisBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (random.nextInt(100) == 0) {
             level.playLocalSound((double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D,
-                   SoundEvents.PORTAL_AMBIENT, SoundSource.BLOCKS, 0.5F, random.nextFloat() * 0.4F + 0.8F, false);
+                    SoundEvents.PORTAL_AMBIENT, SoundSource.BLOCKS, 0.5F, random.nextFloat() * 0.4F + 0.8F, false);
         }
 
         for(int i = 0; i < 4; ++i) {
@@ -194,7 +194,7 @@ public class OtherworldPortal extends AxisBlock {
         builder.add(AXIS);
     }
 
-    public static class Size extends PortalShape{
+    public static class Size{
         private final LevelAccessor level;
         private final Direction.Axis axis;
         private final Direction rightDir;
@@ -206,7 +206,6 @@ public class OtherworldPortal extends AxisBlock {
         private int width;
 
         public Size(LevelAccessor level, BlockPos pos, Direction.Axis axis) {
-            super(level, pos, axis);
             this.level = level;
             this.axis = axis;
             if (axis == Direction.Axis.X) {
@@ -217,7 +216,8 @@ public class OtherworldPortal extends AxisBlock {
                 this.rightDir = Direction.SOUTH;
             }
 
-            for(BlockPos blockpos = pos; pos.getY() > blockpos.getY() - 21 && pos.getY() > 0 && this.canConnect(level.getBlockState(pos.below())); pos = pos.below()) {
+            for(BlockPos blockpos = pos; pos.getY() > blockpos.getY() - 21 && pos.getY() > 0 && this.canConnect(level.getBlockState(pos.below())); pos = pos.below()){
+
             }
 
             int i = this.getDistanceUntilEdge(pos, this.leftDir) - 1;
@@ -240,13 +240,15 @@ public class OtherworldPortal extends AxisBlock {
             int i;
             for(i = 0; i < 22; ++i) {
                 BlockPos blockpos = pos.relative(directionIn, i);
-                if(!this.canConnect(this.level.getBlockState(blockpos)) || !(this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()))) {
+                if(!this.canConnect(this.level.getBlockState(blockpos)) ||
+                        !(this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())||
+                                this.level.getBlockState(blockpos.below()).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()))) {
                     break;
                 }
             }
 
             BlockPos framePos = pos.relative(directionIn, i);
-            return this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()) ? i : 0;
+            return this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()) || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())  ? i : 0;
         }
 
         public int getHeight() {
@@ -268,18 +270,24 @@ public class OtherworldPortal extends AxisBlock {
                     }
 
                     Block block = blockstate.getBlock();
-                    if (block == ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()) {
+                    if (block == ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get() || block == ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get()) {
                         ++this.portalBlockCount;
                     }
 
                     if (i == 0) {
                         BlockPos framePos = blockpos.relative(this.leftDir);
-                        if (!(this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()))) {
+                        if (!(
+                                this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())
+                                        || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
+                        )) {
                             break label56;
                         }
                     } else if (i == this.width - 1) {
                         BlockPos framePos = blockpos.relative(this.rightDir);
-                        if (!(this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()))) {
+                        if (!(
+                                this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())
+                                        || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
+                        )) {
                             break label56;
                         }
                     }
@@ -288,7 +296,10 @@ public class OtherworldPortal extends AxisBlock {
 
             for(int j = 0; j < this.width; ++j) {
                 BlockPos framePos = this.bottomLeft.relative(this.rightDir, j).above(this.height);
-                if (!(this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get()))) {
+                if (!(
+                        this.level.getBlockState(framePos).getBlock().equals(ModBlocks.RESONANT_REINFORCED_DEEPSLATE_BLOCK.get())
+                                || this.level.getBlockState(framePos).getBlock().equals(ModBlocks.UNSTABLE_REINFORCED_DEEPSLATE_BLOCK.get())
+                )) {
                     this.height = 0;
                     break;
                 }
@@ -306,7 +317,7 @@ public class OtherworldPortal extends AxisBlock {
 
         protected boolean canConnect(BlockState pos) {
             Block block = pos.getBlock();
-            return pos.isAir() || block == ModBlocks.OTHERWORLD_PORTAL_BLOCK.get();
+            return pos.isAir() || block == ModBlocks.OTHERWORLD_PORTAL_BLOCK.get() || block == ModBlocks.SCULK_PORTAL_BLOCK.get();
         }
 
         public boolean isValid() {
@@ -331,5 +342,6 @@ public class OtherworldPortal extends AxisBlock {
         public boolean validatePortal() {
             return this.isValid() && this.isPortalCountValidForSize();
         }
+
     }
 }
