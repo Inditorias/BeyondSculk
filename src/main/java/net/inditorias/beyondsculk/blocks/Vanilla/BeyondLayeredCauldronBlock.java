@@ -33,6 +33,12 @@ public class BeyondLayeredCauldronBlock extends LayeredCauldronBlock {
         if(level.getBlockState(pos.below()).is(Blocks.SOUL_FIRE)){
             int fill = state.getValue(BlockStateProperties.LEVEL_CAULDRON);
             level.setBlock(pos, ModBlocks.SOUL_CAULDRON_BLOCK.get().defaultBlockState().setValue(SoulCauldronBlock.FILL, fill), 18);
+            level.setBlock(pos.below(), Blocks.FIRE.defaultBlockState(), 18);
+            if(level.getBlockState(pos.below(2)).is(Blocks.SOUL_SAND)) {
+                level.setBlock(pos.below().below(), ModBlocks.SCORCHED_SAND.get().defaultBlockState(), 18);
+            }else {
+                level.setBlock(pos.below().below(), ModBlocks.SCORCHED_SOIL.get().defaultBlockState(), 18);
+            }
         }
     }
 }

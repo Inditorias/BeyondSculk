@@ -12,8 +12,7 @@ import net.minecraft.world.level.block.Block;
 public class ModTags {
     public static class Blocks{
 
-        public static final TagKey<Block> UNSTABLE_PORTAL_FRAME_BLOCKS = tag("unstable_portal_frame_blocks");
-        public static final TagKey<Block> RESONANT_PORTAL_FRAME_BLOCKS = tag("resonant_portal_frame_blocks");
+        public static final TagKey<Block> SCORCHING_FIRE_BASE_BLOCK = tag("scorching_fire_base_block");
 
         public static TagKey<Block> tag(String name){
             return BlockTags.create(new ResourceLocation(BeyondSculk.MOD_ID, name));

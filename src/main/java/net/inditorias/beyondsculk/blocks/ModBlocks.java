@@ -6,11 +6,10 @@ import net.inditorias.beyondsculk.items.ModItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -41,6 +40,17 @@ public class ModBlocks {
             new SculkPortal(BlockBehaviour.Properties.of(Material.PORTAL).noCollission().strength(-1.0F).sound(SoundType.GLASS).lightLevel(context -> 5)));
     public static final RegistryObject<Block> SOUL_CAULDRON_BLOCK = registerBlockWithoutBlockItem("soul_cauldron_block", () ->
             new SoulCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON)));
+
+    public static final RegistryObject<Block> SCORCHED_SOIL = registerBlock("scorched_soil", () ->
+            new Block(BlockBehaviour.Properties.of(Material.DIRT).sound(SoundType.ROOTED_DIRT)
+                    .strength(0.5f).explosionResistance(0.5f)), CreativeModeTab.TAB_BUILDING_BLOCKS);
+
+    public static final RegistryObject<Block> SCORCHED_SAND = registerBlock("scorched_sand", () ->
+            new ScorchedSand(15447172, BlockBehaviour.Properties.of(Material.SAND).sound(SoundType.SAND)
+                    .strength(0.5f).explosionResistance(0.5f)), CreativeModeTab.TAB_BUILDING_BLOCKS);
+
+
+
 
     private static <T extends Block> RegistryObject<Block> registerBlockWithoutBlockItem(String name, Supplier<T> block) {
         return BLOCKS.register(name, block);
