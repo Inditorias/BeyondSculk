@@ -9,6 +9,7 @@ import net.inditorias.beyondsculk.fluid.ModFluids;
 import net.inditorias.beyondsculk.items.ModItems;
 import net.inditorias.beyondsculk.villager.ModPOIs;
 import net.inditorias.beyondsculk.villager.ModVillagers;
+import net.inditorias.beyondsculk.world.biome.ModBiomes;
 import net.inditorias.beyondsculk.world.dimension.ModDimensions;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -42,6 +43,7 @@ public class BeyondSculk
         ModVillagers.register(modEventBus);
         ModActivities.register(modEventBus);
         VanillaBlocks.register(modEventBus);
+        ModBiomes.register(modEventBus);
         GeckoLib.initialize();
 
         modEventBus.addListener(this::commonSetup);

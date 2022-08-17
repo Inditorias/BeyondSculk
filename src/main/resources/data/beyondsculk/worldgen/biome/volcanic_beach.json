@@ -1,0 +1,29 @@
+{
+  "temperature": 1.2,
+  "downfall": 0.1,
+  "precipitation": "rain",
+  "temperature_modifier": "none",
+  "creature_spawn_probability": 0,
+  "effects": {
+    "sky_color": 8060876,
+    "fog_color": 12779487,
+    "water_color": 3618230,
+    "water_fog_color": 2164019,
+    "grass_color": 7891248,
+    "foliage_color": 5723422,
+    "grass_color_modifier": "none"
+  },
+  "spawners": {},
+  "spawn_costs": {},
+  "carvers": {
+    "air": [
+      "minecraft:cave"
+    ]
+  },
+  "features": [
+    [
+      "minecraft:fossil_lower",
+      "minecraft:fossil_upper"
+    ]
+  ]
+}

@@ -2,31 +2,43 @@
   "type": "beyondsculk:otherworld",
   "generator": {
     "type": "minecraft:noise",
-    "settings": "minecraft:overworld",
+    "settings": "beyondsculk:otherworld",
     "biome_source": {
       "type": "minecraft:multi_noise",
       "biomes": [
         {
-          "biome": "minecraft:plains",
+          "biome": "beyondsculk:mooshroom_plains",
           "parameters": {
-            "temperature": 2,
+            "temperature": 0.9,
+            "humidity": 0.2,
+            "continentalness": 2,
+            "erosion": 0.2,
+            "weirdness": 0.2,
+            "depth": 0.2,
+            "offset": 0
+          }
+        },
+        {
+          "biome": "beyondsculk:volcanic_beach",
+          "parameters": {
+            "temperature": 0,
             "humidity": 0,
-            "continentalness": 1,
-            "erosion": -1,
-            "weirdness": -1,
+            "continentalness": 0,
+            "erosion": 0,
+            "weirdness": 0,
             "depth": 0,
             "offset": 0
           }
         },
         {
-          "biome": "minecraft:soul_sand_valley",
+          "biome": "minecraft:ocean",
           "parameters": {
-            "temperature": -1,
-            "humidity": 1,
-            "continentalness": 0,
-            "erosion": 2,
-            "weirdness": 2,
-            "depth": 1,
+            "temperature": 0,
+            "humidity": 1.4,
+            "continentalness": -2,
+            "erosion": 1,
+            "weirdness": 1,
+            "depth": -2,
             "offset": 0
           }
         }
